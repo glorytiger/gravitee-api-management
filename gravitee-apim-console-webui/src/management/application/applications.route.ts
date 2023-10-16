@@ -391,6 +391,24 @@ function applicationsConfig($stateProvider) {
           ApplicationService.getSubscribedAPI($stateParams.applicationId),
       },
     })
+    .state('management.applications.application.notifications', {
+      url: '/notifications',
+      component: 'applicationNotificationsListSettings',
+      data: {
+        docs: {
+          page: 'management-application-notifications',
+        },
+      },
+    })
+    .state('management.applications.application.notifications-details', {
+      url: '/notifications/:notificationId',
+      component: 'applicationNotificationsDetailsSettings',
+      data: {
+        docs: {
+          page: 'management-application-notifications',
+        },
+      },
+    })
     .state('management.applications.application.logs.log', {
       url: '/:logId?timestamp&from&to&q&page&size',
       component: 'applicationLog',

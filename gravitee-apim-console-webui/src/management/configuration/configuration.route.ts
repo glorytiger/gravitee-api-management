@@ -685,6 +685,24 @@ function configurationRouterConfig($stateProvider: StateProvider) {
         },
       },
     })
+    .state('management.settings.notifications', {
+      url: '/notifications',
+      component: 'notificationsListSettings',
+      data: {
+        docs: {
+          page: 'management-configuration-notifications',
+        },
+      },
+    })
+    .state('management.settings.notifications-details', {
+      url: '/notifications/:notificationId',
+      component: 'notificationsDetailsSettings',
+      data: {
+        docs: {
+          page: 'management-configuration-notifications',
+        },
+      },
+    })
     .state('management.settings.groups', {
       abstract: true,
       url: '/groups',

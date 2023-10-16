@@ -17,22 +17,21 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { takeUntil, tap } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
 import { UIRouterStateParams } from '../../../../../ajs-upgraded-providers';
-import { NotificationSettingsService } from '../../../../../services-ngx/notification-settings.service';
 import { NotificationSettings } from '../../../../../entities/notification/notificationSettings';
 import { Notifier } from '../../../../../entities/notification/notifier';
 import {
-  NotificationsServices
-} from "../../../../../components/notifications/notifications-list/notifications-list-reusable.component";
+  NotificationSettingsApplicationService
+} from "../../../../../services-ngx/notification-settings-application.service";
 import {
   NotificationDetailsServices
 } from "../../../../../components/notifications/notifications-list/notification-details/notifications-details-reusable.component";
 
 @Component({
-  selector: 'notifications-details',
-  template: require('./notification-details.component.html'),
-  styles: [require('./notification-details.component.scss')],
+  selector: 'application-notification-details',
+  template: require('./application-notification-details.component.html'),
+  styles: [require('./application-notification-details.component.scss')],
 })
-export class NotificationDetailsComponent implements OnInit, OnDestroy {
+export class ApplicationNotificationDetailsComponent implements OnInit, OnDestroy {
   public isLoadingData = true;
   public notificationSettings: NotificationSettings;
   public formInitialValues: unknown;
@@ -43,7 +42,7 @@ export class NotificationDetailsComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
-    private readonly notificationSettingsService: NotificationSettingsService,
+    private readonly notificationSettingsApplicationService: NotificationSettingsApplicationService,
     @Inject(UIRouterStateParams) private readonly ajsStateParams,
   ) {}
 
@@ -51,14 +50,14 @@ export class NotificationDetailsComponent implements OnInit, OnDestroy {
     this.isLoadingData = true;
 
     this.notificationsDetailsServices = {
-      reference: { referenceType: 'API', referenceId: this.ajsStateParams.applicationId},
-      update: (newMetadata) => this.notificationSettingsService.update(this.ajsStateParams.apiId, this.ajsStateParams.notificationId, newMetadata),
+      reference: { referenceType: "APPLICATION", referenceId: this.ajsStateParams.applicationId},
+      update: (newMetadata) => this.notificationSettingsApplicationService.update(this.ajsStateParams.applicationId, this.ajsStateParams.notificationId, newMetadata),
     }
 
     combineLatest([
-      this.notificationSettingsService.getHooks(),
-      this.notificationSettingsService.getSingleNotificationSetting(this.ajsStateParams.apiId, this.ajsStateParams.notificationId),
-      this.notificationSettingsService.getNotifiers(this.ajsStateParams.apiId),
+      this.notificationSettingsApplicationService.getHooks(),
+      this.notificationSettingsApplicationService.getSingleNotificationSetting(this.ajsStateParams.applicationId, this.ajsStateParams.notificationId),
+      this.notificationSettingsApplicationService.getNotifiers(this.ajsStateParams.applicationId),
     ])
       .pipe(
         tap(([hooks, notificationSettings, notifiers]) => {

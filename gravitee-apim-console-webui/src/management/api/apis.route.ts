@@ -838,7 +838,7 @@ export const states: Ng2StateDeclaration[] = [
     },
   },
   {
-    name: 'management.apis.notification-details',
+    name: 'management.apis.notifications-details',
     component: NotificationDetailsComponent,
     url: '/notifications/:notificationId',
     data: {

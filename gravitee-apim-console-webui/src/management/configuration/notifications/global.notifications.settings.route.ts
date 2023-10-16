@@ -25,38 +25,6 @@ export default applicationsNotificationsRouterConfig;
 /* @ngInject */
 function applicationsNotificationsRouterConfig($stateProvider) {
   $stateProvider
-    .state('management.settings.notifications', {
-      url: '/notifications',
-      component: 'notificationsComponentAjs',
-      data: {
-        perms: {
-          only: ['environment-notification-r'],
-          unauthorizedFallbackTo: 'management.home',
-        },
-      },
-      resolve: {
-        resolvedHookScope: () => Scope.PORTAL,
-        resolvedHooks: (NotificationSettingsService: NotificationSettingsService) =>
-          NotificationSettingsService.getHooks(Scope.PORTAL).then((response) => response.data),
-        resolvedNotifiers: (NotificationSettingsService: NotificationSettingsService) =>
-          NotificationSettingsService.getNotifiers(Scope.PORTAL, null).then((response) => response.data),
-        notificationSettings: (NotificationSettingsService: NotificationSettingsService) =>
-          NotificationSettingsService.getNotificationSettings(Scope.PORTAL, null).then((response) => response.data),
-      },
-    })
-    .state('management.settings.notifications.notification', {
-      url: '/:notificationId',
-      component: 'notificationsComponentAjs',
-      data: {
-        menu: null,
-        docs: {
-          page: 'management-configuration-notifications',
-        },
-        perms: {
-          only: ['environment-notification-r'],
-        },
-      },
-    })
     .state('management.alerts', {
       url: '/alerts',
       template: require('../../../components/alerts/alertTabs/alert-tabs.html'),

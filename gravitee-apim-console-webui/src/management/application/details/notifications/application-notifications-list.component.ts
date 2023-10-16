@@ -17,44 +17,48 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { takeUntil, tap } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
-import { NotificationSettingsService } from '../../../../services-ngx/notification-settings.service';
-import { UIRouterStateParams } from '../../../../ajs-upgraded-providers';
+import { UIRouterState, UIRouterStateParams } from "../../../../ajs-upgraded-providers";
 import { Notifier } from '../../../../entities/notification/notifier';
+import {
+  NotificationSettingsApplicationService
+} from "../../../../services-ngx/notification-settings-application.service";
 import {
   NotificationsServices
 } from "../../../../components/notifications/notifications-list/notifications-list-reusable.component";
+import { StateService } from "@uirouter/angular";
 
 @Component({
-  selector: 'notifications-list',
-  template: require('./notifications-list.component.html'),
-  styles: [require('./notifications-list.component.scss')],
+  selector: 'application-notifications-list',
+  template: require('./application-notifications-list.component.html'),
+  styles: [require('./application-notifications-list.component.scss')],
 })
-export class NotificationsListComponent implements OnInit {
+export class ApplicationNotificationsListComponent implements OnInit {
   public notifiersGroup: Notifier[] = [];
   public isLoadingData = true;
   public displayedColumns = ['name', 'notifier', 'actions'];
   public notificationsList = [];
   notificationsServices: NotificationsServices;
-
+  currentState;
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     @Inject(UIRouterStateParams) private readonly ajsStateParams,
-    private readonly notificationSettingsService: NotificationSettingsService,
+    @Inject(UIRouterState) private readonly ajsState: StateService,
+    private readonly notificationSettingsApplicationService: NotificationSettingsApplicationService,
   ) {}
 
   public ngOnInit() {
     this.isLoadingData = true;
-
+    this.currentState = this.ajsState.current.name;
     this.notificationsServices = {
-      reference: { referenceType: "API", referenceId: this.ajsStateParams.apiId},
-      create: (newMetadata) => this.notificationSettingsService.create(this.ajsStateParams.apiId, newMetadata),
-      delete: (id) => this.notificationSettingsService.delete(this.ajsStateParams.applicationId, id)
+      reference: { referenceType: "APPLICATION", referenceId: this.ajsStateParams.applicationId},
+      create: (newMetadata) => this.notificationSettingsApplicationService.create(this.ajsStateParams.applicationId, newMetadata),
+      delete: (id) => this.notificationSettingsApplicationService.delete(this.ajsStateParams.applicationId, id)
     }
 
     combineLatest([
-      this.notificationSettingsService.getAll(this.ajsStateParams.apiId),
-      this.notificationSettingsService.getNotifiers(this.ajsStateParams.apiId),
+      this.notificationSettingsApplicationService.getAll(this.ajsStateParams.applicationId),
+      this.notificationSettingsApplicationService.getNotifiers(this.ajsStateParams.applicationId),
     ])
       .pipe(
         tap(([notificationsList, notifiers]) => {

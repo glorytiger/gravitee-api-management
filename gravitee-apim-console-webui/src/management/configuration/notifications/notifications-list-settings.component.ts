@@ -14,58 +14,59 @@
  * limitations under the License.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
-import { takeUntil, tap } from 'rxjs/operators';
-import { combineLatest, Subject } from 'rxjs';
-import { NotificationSettingsService } from '../../../../services-ngx/notification-settings.service';
-import { UIRouterStateParams } from '../../../../ajs-upgraded-providers';
-import { Notifier } from '../../../../entities/notification/notifier';
+import { Component, OnInit } from "@angular/core";
+import { Notifier } from "../../../entities/notification/notifier";
+import { combineLatest, Observable, Subject } from "rxjs";
+import { takeUntil, tap } from "rxjs/operators";
+import { NotificationSettingsNewService } from "../../../services-ngx/notification-settings-new.service";
 import {
   NotificationsServices
-} from "../../../../components/notifications/notifications-list/notifications-list-reusable.component";
+} from "../../../components/notifications/notifications-list/notifications-list-reusable.component";
 
 @Component({
-  selector: 'notifications-list',
-  template: require('./notifications-list.component.html'),
-  styles: [require('./notifications-list.component.scss')],
+  selector: "notifications-list-settings",
+  template: require("./notifications-list-settings.component.html"),
+  styles: [require("./notifications-list-settings.component.scss")]
 })
-export class NotificationsListComponent implements OnInit {
+export class NotificationsListSettingsComponent implements OnInit {
   public notifiersGroup: Notifier[] = [];
   public isLoadingData = true;
-  public displayedColumns = ['name', 'notifier', 'actions'];
+  public displayedColumns = ["name", "notifier", "actions"];
   public notificationsList = [];
   notificationsServices: NotificationsServices;
 
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
-    @Inject(UIRouterStateParams) private readonly ajsStateParams,
-    private readonly notificationSettingsService: NotificationSettingsService,
-  ) {}
+    private readonly notificationSettingsNewService: NotificationSettingsNewService
+  ) {
+  }
 
   public ngOnInit() {
     this.isLoadingData = true;
-
     this.notificationsServices = {
-      reference: { referenceType: "API", referenceId: this.ajsStateParams.apiId},
-      create: (newMetadata) => this.notificationSettingsService.create(this.ajsStateParams.apiId, newMetadata),
-      delete: (id) => this.notificationSettingsService.delete(this.ajsStateParams.applicationId, id)
-    }
-
+      reference: { referenceType: "PORTAL", referenceId: "DEFAULT" },
+      create: (newMetadata) => this.notificationSettingsNewService.create(newMetadata),
+      delete: (id) => this.notificationSettingsNewService.delete(id)
+    };
     combineLatest([
-      this.notificationSettingsService.getAll(this.ajsStateParams.apiId),
-      this.notificationSettingsService.getNotifiers(this.ajsStateParams.apiId),
+      this.notificationSettingsNewService.getAll(),
+      this.notificationSettingsNewService.getNotifiers()
     ])
       .pipe(
         tap(([notificationsList, notifiers]) => {
           this.notifiersGroup = notifiers;
           this.notificationsList = notificationsList;
         }),
-        takeUntil(this.unsubscribe$),
+        takeUntil(this.unsubscribe$)
       )
       .subscribe(() => {
         this.isLoadingData = false;
       });
+  }
+
+  createNotification(note): Observable<any> {
+    return this.notificationSettingsNewService.create(note);
   }
 
   ngOnDestroy() {
@@ -73,8 +74,9 @@ export class NotificationsListComponent implements OnInit {
     this.unsubscribe$.unsubscribe();
   }
 
-
   listUpdate() {
     this.ngOnInit();
   }
+
+  protected readonly event = event;
 }

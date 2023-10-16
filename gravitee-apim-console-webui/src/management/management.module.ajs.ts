@@ -453,6 +453,18 @@ import { OrgNavigationComponent } from '../organization/configuration/navigation
 import { ClientRegistrationProviderComponent } from './configuration/client-registration-providers/client-registration-provider/client-registration-provider.component';
 import { GioPermissionService } from '../shared/components/gio-permission/gio-permission.service';
 import { ApiAnalyticsOverviewComponentAjs } from './api/analytics/overview/analytics-overview.component.ajs';
+import {
+  NotificationsListSettingsComponent
+} from "./configuration/notifications/notifications-list-settings.component";
+import {
+  NotificationsDetailsSettingsComponent
+} from "./configuration/notifications/notifications-details/notifications-details-settings.component";
+import {
+  ApplicationNotificationsListComponent
+} from "./application/details/notifications/application-notifications-list.component";
+import {
+  ApplicationNotificationDetailsComponent
+} from "./application/details/notifications/notification-details/application-notification-details.component";
 
 (<any>window).moment = moment;
 require('angular-moment-picker');
@@ -774,6 +786,13 @@ graviteeManagementModule.service('NotificationSettingsService', NotificationSett
 graviteeManagementModule.service('NotificationTemplatesService', NotificationTemplatesService);
 graviteeManagementModule.controller('DialogAddNotificationSettingsController', DialogAddNotificationSettingsController);
 graviteeManagementModule.component('notificationsComponentAjs', NotificationsComponentAjs);
+
+graviteeManagementModule.directive('notificationsListSettings', downgradeComponent({ component: NotificationsListSettingsComponent }));
+graviteeManagementModule.directive('notificationsDetailsSettings', downgradeComponent({ component: NotificationsDetailsSettingsComponent }));
+
+graviteeManagementModule.directive('applicationNotificationsListSettings', downgradeComponent({ component: ApplicationNotificationsListComponent }));
+graviteeManagementModule.directive('applicationNotificationsDetailsSettings', downgradeComponent({ component: ApplicationNotificationDetailsComponent }));
+
 
 graviteeManagementModule.component('logout', LogoutComponent);
 

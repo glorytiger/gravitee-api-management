@@ -35,6 +35,7 @@ import { ApplicationNavigationModule } from './details/application-navigation/ap
 import { GioTableWrapperModule } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioRoleModule } from '../../shared/components/gio-role/gio-role.module';
 import { GioPermissionModule } from '../../shared/components/gio-permission/gio-permission.module';
+import { ApplicationNotificationsListModule } from "./details/notifications/application-notifications-list.module";
 
 @NgModule({
   imports: [
@@ -61,6 +62,7 @@ import { GioPermissionModule } from '../../shared/components/gio-permission/gio-
 
     ApplicationNavigationModule,
     UIRouterModule,
+    ApplicationNotificationsListModule
   ],
   declarations: [EnvApplicationListComponent],
   exports: [EnvApplicationListComponent],

@@ -24,7 +24,6 @@ import { UIRouterStateParams } from '../../../../ajs-upgraded-providers';
 
 export interface NotificationsAddNotificationDialogData {
   notifier: Notifier[];
-  reference: any;
 }
 
 export type NotificationsAddNotificationDialogResult = NewNotificationSettings;
@@ -38,14 +37,13 @@ export class NotificationsAddNotificationDialogComponent {
   notificationForm: FormGroup;
   notifierList: Notifier[];
   notificationTemplate: NotificationSettings[];
-  reference;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) dialogData: NotificationsAddNotificationDialogData,
+    @Inject(UIRouterStateParams) private readonly ajsStateParams,
     public dialogRef: MatDialogRef<NotificationsAddNotificationDialogData, NotificationsAddNotificationDialogResult>,
   ) {
     this.notifierList = dialogData.notifier;
-    this.reference = dialogData.reference;
     this.notificationForm = new FormGroup({
       name: new FormControl(null, [Validators.required]),
       notifier: new FormControl(this.notifierList[0].id, [Validators.required]),
@@ -60,7 +58,8 @@ export class NotificationsAddNotificationDialogComponent {
       notifier,
       config_type: 'GENERIC',
       hooks: [],
-      ...this.reference
+      referenceType: 'API',
+      referenceId: this.ajsStateParams.apiId,
     });
   }
 }

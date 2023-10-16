@@ -13,49 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Scope } from '../../../../entities/scope';
-import AlertService from '../../../../services/alert.service';
-import NotificationSettingsService from '../../../../services/notificationSettings.service';
-import { Scope as AlertScope } from '../../../../entities/alert';
 
 export default applicationsNotificationsRouterConfig;
 
 /* @ngInject */
-function applicationsNotificationsRouterConfig($stateProvider) {
-  $stateProvider
-    .state('management.applications.application.notifications', {
-      url: '/notifications',
-      component: 'notificationsComponentAjs',
-      data: {
-        perms: {
-          only: ['application-notification-r', 'application-alert-r'],
-        },
-      },
-      resolve: {
-        resolvedHookScope: () => Scope.APPLICATION,
-        resolvedHooks: (NotificationSettingsService: NotificationSettingsService) =>
-          NotificationSettingsService.getHooks(Scope.APPLICATION).then((response) => response.data),
-        resolvedNotifiers: (NotificationSettingsService: NotificationSettingsService, $stateParams) =>
-          NotificationSettingsService.getNotifiers(Scope.APPLICATION, $stateParams.applicationId).then((response) => response.data),
-        notificationSettings: (NotificationSettingsService: NotificationSettingsService, $stateParams) =>
-          NotificationSettingsService.getNotificationSettings(Scope.APPLICATION, $stateParams.applicationId).then(
-            (response) => response.data,
-          ),
-        alerts: (AlertService: AlertService, $stateParams) =>
-          AlertService.listAlerts(AlertScope.APPLICATION, true, $stateParams.applicationId).then((response) => response.data),
-      },
-    })
-    .state('management.applications.application.notifications.notification', {
-      url: '/:notificationId',
-      component: 'notificationsComponentAjs',
-      data: {
-        menu: null,
-        docs: {
-          page: 'management-application-notifications',
-        },
-        perms: {
-          only: ['application-notification-r'],
-        },
-      },
-    });
+function applicationsNotificationsRouterConfig() {
+
 }

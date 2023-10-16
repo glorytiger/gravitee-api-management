@@ -26,24 +26,28 @@ import { NotificationDetailsComponent } from './notification-details.component';
 
 import { GioPermissionModule } from '../../../../../shared/components/gio-permission/gio-permission.module';
 import { GioGoBackButtonModule } from '../../../../../shared/components/gio-go-back-button/gio-go-back-button.module';
+import {
+    NotificationsListReusableModule
+} from "../../../../../components/notifications/notifications-list/notifications-list-reusable.module";
 
 @NgModule({
   declarations: [NotificationDetailsComponent],
   exports: [NotificationDetailsComponent],
-  imports: [
-    CommonModule,
-    GioPermissionModule,
-    GioIconsModule,
-    GioPermissionModule,
-    GioSaveBarModule,
-    GioFormHeadersModule,
-    GioFormFocusInvalidModule,
-    GioGoBackButtonModule,
-    ReactiveFormsModule,
-    MatCheckboxModule,
-    MatInputModule,
-    MatCardModule,
-    MatSnackBarModule,
-  ],
+    imports: [
+        CommonModule,
+        GioPermissionModule,
+        GioIconsModule,
+        GioPermissionModule,
+        GioSaveBarModule,
+        GioFormHeadersModule,
+        GioFormFocusInvalidModule,
+        GioGoBackButtonModule,
+        ReactiveFormsModule,
+        MatCheckboxModule,
+        MatInputModule,
+        MatCardModule,
+        MatSnackBarModule,
+        NotificationsListReusableModule
+    ]
 })
 export class NotificationDetailsModule {}
