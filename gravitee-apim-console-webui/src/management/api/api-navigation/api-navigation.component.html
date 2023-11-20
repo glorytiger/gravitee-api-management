@@ -93,7 +93,7 @@
       </ng-container>
     </gio-submenu>
   </div>
-  <div class="api-navigation__content">
+  <div class="api-navigation__content" data-testid="deployBanner">
     <ng-content select="#banner"></ng-content>
     <div class="api-navigation__content__view" [ngClass]="{ breadcrumb: hasBreadcrumb }">
       <div class="api-navigation__content__view__banners" *ngIf="banners$ | async as banners">

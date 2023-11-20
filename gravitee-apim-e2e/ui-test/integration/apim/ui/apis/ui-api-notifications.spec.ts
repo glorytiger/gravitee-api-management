@@ -15,9 +15,10 @@
  */
 import { ADMIN_USER, API_PUBLISHER_USER } from '@fakers/users/users';
 import { ApisFaker } from '@gravitee/fixtures/management/ApisFaker';
-import { Visibility } from '@gravitee/management-webclient-sdk/src/lib/models';
 import { ApiImport } from '@model/api-imports';
 import apiDetails from 'ui-test/support/PageObjects/Apis/ApiDetails';
+import { PlanStatus } from '../../../../../lib/management-webclient-sdk/src/lib/models';
+import {PlansFaker} from "@gravitee/fixtures/management/PlansFaker";
 
 let api: ApiImport;
 
@@ -33,8 +34,10 @@ describe('Notifications page', () => {
     cy.request({
       method: 'POST',
       url: `${Cypress.env('managementApi')}${Cypress.env('defaultOrgEnv')}/apis/import`,
-      auth: { username: ADMIN_USER.username, password: ADMIN_USER.password },
-      body: ApisFaker.apiImport({ visibility: Visibility.PUBLIC }),
+      auth: { username: API_PUBLISHER_USER.username, password: API_PUBLISHER_USER.password },
+      body: ApisFaker.apiImport({
+        plans: [PlansFaker.plan({ status: PlanStatus.PUBLISHED })],
+      }),
     }).then((response) => {
       expect(response.status).to.eq(200);
       api = response.body;
@@ -52,7 +55,7 @@ describe('Notifications page', () => {
   it('Create generic notification', () => {
     cy.contains('Default Mail Notifications').should('be.visible');
     cy.getByDataTestId('api_notifications_add_notification').click();
-    cy.contains('New notification').should('be.visible');
+    cy.contains('New notification',{timeout: 5000}).should('be.visible');
     cy.getByDataTestId('api_notifications_create_namefield').type('Test notification');
     cy.getByDataTestId('create_notification_button').contains('Create').click();
     cy.contains('Notification created successfully').should('be.visible');
@@ -66,20 +69,28 @@ describe('Notifications page', () => {
     cy.contains('has been deleted').should('be.visible');
   });
 
-  it('Edit notification and save changes', () => {
-    cy.getByDataTestId('notifications_List_Table').first().click();
-    cy.getByDataTestId('notification-detail-checkbox-APIKEY_EXPIRED').click();
-    cy.contains('have unsaved changes').should('be.visible');
-    cy.getByDataTestId('api_notifications_savebar', { timeout: 5000 }).contains('Save').click();
-    cy.contains('Notification settings successfully saved!').should('be.visible');
-  });
+  describe('Edit notification', () => {
+    beforeEach(() => {
+      cy.getByDataTestId('notifications_List_Table').first().click();
+      cy.getByDataTestId('notification-detail-checkbox-API_DEPLOYED').click();
+      cy.contains('have unsaved changes').should('be.visible');
+    });
 
-  it('Edit notification and discard changes', () => {
-    cy.getByDataTestId('notifications_List_Table').first().click();
-    cy.getByDataTestId('notification-detail-checkbox-APIKEY_EXPIRED').click();
-    cy.contains('have unsaved changes').should('be.visible');
-    cy.getByDataTestId('api_notifications_savebar', { timeout: 5000 }).contains('Discard').click();
-    cy.contains('You have unsaved changes').should('not.be.visible');
+    it('Edit notification, save changes and check notifications work', () => {
+      cy.getByDataTestId('api_notification_savebar').contains('Save').click();
+      cy.contains('Notification settings successfully saved!').should('be.visible');
+      cy.getByDataTestId('deployBanner').contains('Deploy API').click();
+      cy.getByDataTestId('confirmApiDeploy').contains('Deploy').click();
+      cy.contains('API successfully deployed.').should('be.visible');
+      cy.getByDataTestId('notification_badge').click();
+      cy.getByDataTestId('notification_menu').contains('API deployed');
+      cy.getByDataTestId('notification_menu').contains('Delete all').click();
+    });
+
+    it('Edit notification and discard changes', () => {
+      cy.getByDataTestId('api_notification_savebar',).contains('Discard').click();
+      cy.contains('You have unsaved changes').should('not.be.visible');
+    });
   });
 
   after(() => {
