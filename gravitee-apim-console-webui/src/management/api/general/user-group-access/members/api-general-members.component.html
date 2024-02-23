@@ -29,6 +29,7 @@
           mat-raised-button
           type="button"
           (click)="addMember()"
+          data-testid="api_usergroup_add_members"
           color="primary"
         >
           <mat-icon svgIcon="gio:plus"></mat-icon> Add members
@@ -42,6 +43,7 @@
         gioFormSlideToggle
         formControlName="isNotificationsEnabled"
         aria-label="Enable notifications when members are added to this API"
+        data-testid="api_usergroup_notify_toggle"
       ></mat-slide-toggle>
     </gio-form-slide-toggle>
 
@@ -51,6 +53,7 @@
       [dataSource]="dataSource"
       class="card__table"
       formGroupName="members"
+      data-testid="api-ug-access-members-table"
       aria-label="Direct members table"
     >
       <ng-container matColumnDef="picture">

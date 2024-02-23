@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// gio-submenu-item__title and gio-submenu-item for Design
 
-class ApiDetails {
-  policyStudioMenuItem(): Cypress.Chainable<JQuery<HTMLElement>> {
-    return cy.get('.gio-submenu-item').contains('Policy Studio');
+import { ApiV4 } from '@gravitee/management-v2-webclient-sdk/src/lib';
+
+let v4Api: ApiV4;
+
+class UserGroupAccess {
+  userAndGroupAccessMembers(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(`[href="#!/default/apis/${v4Api.id}/members"]`);
   }
 
-  infoMenuItem(): Cypress.Chainable<JQuery<HTMLElement>> {
-    return cy.get('.gio-submenu-item__title').contains('Info');
+  userAndGroupAccessGroups(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(`[href="#!/default/apis/${v4Api.id}/groups"]`);
   }
 
-  plansMenuItem(): Cypress.Chainable<JQuery<HTMLElement>> {
-    return cy.get('.gio-submenu-item__title').contains('Plans');
-  }
-
-  userAndGroupAccessMenuItem(): Cypress.Chainable<JQuery<HTMLElement>> {
-    return cy.get('.gio-submenu-item__title').contains('User and group access');
+  userAndGroupAccessTransferOwnership(): Cypress.Chainable<JQuery<HTMLElement>> {
+    return cy.get(`[href="#!/default/apis/${v4Api.id}/transfer-ownership"]`);
   }
 }
 
-export default ApiDetails;
+export default UserGroupAccess;
