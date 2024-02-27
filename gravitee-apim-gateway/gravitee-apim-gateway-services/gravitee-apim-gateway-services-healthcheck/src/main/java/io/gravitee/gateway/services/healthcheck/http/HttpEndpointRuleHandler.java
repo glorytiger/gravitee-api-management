@@ -82,6 +82,7 @@ public class HttpEndpointRuleHandler<T extends HttpEndpoint> extends EndpointRul
                 .setKeepAlive(endpoint.getHttpClientOptions().isKeepAlive())
                 .setTcpKeepAlive(endpoint.getHttpClientOptions().isKeepAlive())
                 .setIdleTimeout((int) (endpoint.getHttpClientOptions().getIdleTimeout() / 1000))
+                .setKeepAliveTimeout((int) (endpoint.getHttpClientOptions().getKeepAliveTimeout() / 1000))
                 // We want to ensure that the connect timeout will expire BEFORE an other HC will be executed
                 .setConnectTimeout((int) Math.min(getDelayMillis(), endpoint.getHttpClientOptions().getConnectTimeout()))
                 .setTryUseCompression(endpoint.getHttpClientOptions().isUseCompression());
