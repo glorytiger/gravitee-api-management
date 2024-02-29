@@ -42,11 +42,13 @@ import { CustomUserFieldsComponent } from './custom-user-fields/custom-user-fiel
 import { EnvironmentNotificationModule } from './notification/environment-notification.module';
 import { ApiQualityRulesNgModule } from './api-quality-rules-ng/api-quality-rules-ng.module';
 import { IdentityProvidersNgModule } from './identity-providers-ng/identity-providers-ng.module';
+import { TopApisModule } from './top-apis/migrated/top-apis.module';
 
 import { DocumentationModule } from '../../components/documentation/documentation.module';
 
 @NgModule({
   imports: [
+    TopApisModule,
     ApiQualityRulesNgModule,
     SettingsRoutingModule,
     RouterModule,
