@@ -37,8 +37,10 @@ import io.gravitee.gateway.handlers.api.definition.Api;
 import io.gravitee.gateway.services.healthcheck.EndpointRule;
 import io.gravitee.reporter.api.health.EndpointStatus;
 import io.gravitee.reporter.api.health.Step;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.VertxTestContext;
@@ -79,7 +81,8 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
     void shouldNotValidate_invalidEndpoint(Vertx vertx, VertxTestContext context) throws Throwable {
         // Prepare HTTP endpoint
         wm.stubFor(get(urlEqualTo("/")).willReturn(notFound()));
-        final Checkpoint checkpoint = context.checkpoint();
+        final Checkpoint statusCheckpoint = context.checkpoint();
+        final Checkpoint responseCheckpoint = context.checkpoint();
 
         EndpointRule rule = createEndpointRule();
 
@@ -100,12 +103,17 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
             (Handler<EndpointStatus>) status -> {
                 assertFalse(status.isSuccess());
                 wm.verify(getRequestedFor(urlEqualTo("/")));
-                checkpoint.flag();
+                statusCheckpoint.flag();
             }
         );
 
         // Run
-        runner.handle(null);
+        runner.handle(
+            (Handler<AsyncResult<HttpClientResponse>>) hcResponseHandler -> {
+                assertTrue(hcResponseHandler.succeeded());
+                responseCheckpoint.flag();
+            }
+        );
     }
 
     @Test
@@ -113,7 +121,8 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
         // Prepare HTTP endpoint
         wm.stubFor(get(urlEqualTo("/")).willReturn(ok("{\"status\": \"green\"}")));
 
-        final Checkpoint checkpoint = context.checkpoint();
+        final Checkpoint statusCheckpoint = context.checkpoint();
+        final Checkpoint responseCheckpoint = context.checkpoint();
 
         // Prepare
         EndpointRule rule = createEndpointRule();
@@ -134,12 +143,17 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
             (Handler<EndpointStatus>) status -> {
                 assertTrue(status.isSuccess());
                 wm.verify(getRequestedFor(urlEqualTo("/")));
-                checkpoint.flag();
+                statusCheckpoint.flag();
             }
         );
 
         // Run
-        runner.handle(null);
+        runner.handle(
+            (Handler<AsyncResult<HttpClientResponse>>) hcResponseHandler -> {
+                assertTrue(hcResponseHandler.succeeded());
+                responseCheckpoint.flag();
+            }
+        );
     }
 
     @Test
@@ -147,7 +161,8 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
         // Prepare HTTP endpoint
         wm.stubFor(get(urlEqualTo("/withProperties/")).willReturn(ok("{\"status\": \"green\"}")));
 
-        final Checkpoint checkpoint = context.checkpoint();
+        final Checkpoint statusCheckpoint = context.checkpoint();
+        final Checkpoint responseCheckpoint = context.checkpoint();
 
         // Prepare
         EndpointRule rule = createEndpointRule("{#properties['backend’]}");
@@ -170,12 +185,17 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
             (Handler<EndpointStatus>) status -> {
                 assertTrue(status.isSuccess());
                 wm.verify(getRequestedFor(urlEqualTo("/withProperties/")));
-                checkpoint.flag();
+                statusCheckpoint.flag();
             }
         );
 
         // Run
-        runner.handle(null);
+        runner.handle(
+            (Handler<AsyncResult<HttpClientResponse>>) hcResponseHandler -> {
+                assertTrue(hcResponseHandler.succeeded());
+                responseCheckpoint.flag();
+            }
+        );
     }
 
     @Test
@@ -183,7 +203,8 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
         // Prepare HTTP endpoint
         wm.stubFor(get(urlEqualTo("/")).willReturn(ok("{\"status\": \"yellow\"}")));
 
-        final Checkpoint checkpoint = context.checkpoint();
+        final Checkpoint statusCheckpoint = context.checkpoint();
+        final Checkpoint responseCheckpoint = context.checkpoint();
 
         // Prepare
         EndpointRule rule = createEndpointRule();
@@ -210,12 +231,17 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
                 assertEquals(HttpMethod.GET, result.getRequest().getMethod());
                 assertNotNull(result.getResponse().getBody());
 
-                checkpoint.flag();
+                statusCheckpoint.flag();
             }
         );
 
         // Run
-        runner.handle(null);
+        runner.handle(
+            (Handler<AsyncResult<HttpClientResponse>>) hcResponseHandler -> {
+                assertTrue(hcResponseHandler.succeeded());
+                responseCheckpoint.flag();
+            }
+        );
 
         // Wait until completion
         assertTrue(context.awaitCompletion(5, TimeUnit.SECONDS));
@@ -226,7 +252,8 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
     void shouldValidateFromRoot(Vertx vertx, VertxTestContext context) throws Throwable {
         // Prepare HTTP endpoint
         wm.stubFor(get(urlEqualTo("/")).willReturn(ok()));
-        final Checkpoint checkpoint = context.checkpoint();
+        final Checkpoint statusCheckpoint = context.checkpoint();
+        final Checkpoint responseCheckpoint = context.checkpoint();
 
         // Prepare
         EndpointRule rule = createEndpointRule("/additional-but-unused-path-for-hc");
@@ -249,12 +276,17 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
                 wm.verify(getRequestedFor(urlEqualTo("/")));
                 wm.verify(0, getRequestedFor(urlEqualTo("/additional-but-unused-path-for-hc")));
                 assertTrue(status.isSuccess());
-                checkpoint.flag();
+                statusCheckpoint.flag();
             }
         );
 
         // Run
-        runner.handle(null);
+        runner.handle(
+            (Handler<AsyncResult<HttpClientResponse>>) hcResponseHandler -> {
+                assertTrue(hcResponseHandler.succeeded());
+                responseCheckpoint.flag();
+            }
+        );
     }
 
     @Test
@@ -262,7 +294,8 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
         // Prepare HTTP endpoint
         wm.stubFor(get(urlEqualTo("/")).withHost(equalTo("my_local_host")).willReturn(ok()));
 
-        final Checkpoint checkpoint = context.checkpoint();
+        final Checkpoint statusCheckpoint = context.checkpoint();
+        final Checkpoint responseCheckpoint = context.checkpoint();
 
         // Prepare
         EndpointRule rule = createEndpointRule("http://my_local_host", null, true);
@@ -283,12 +316,17 @@ public abstract class AbstractManagedEndpointRuleHandlerTest {
             (Handler<EndpointStatus>) status -> {
                 assertTrue(status.isSuccess());
                 wm.verify(getRequestedFor(urlEqualTo("/")));
-                checkpoint.flag();
+                statusCheckpoint.flag();
             }
         );
 
         // Run
-        runner.handle(null);
+        runner.handle(
+            (Handler<AsyncResult<HttpClientResponse>>) hcResponseHandler -> {
+                assertTrue(hcResponseHandler.succeeded());
+                responseCheckpoint.flag();
+            }
+        );
     }
 
     private Endpoint createEndpoint(String baseUrl, String targetPath, boolean useSystemProxy) {
