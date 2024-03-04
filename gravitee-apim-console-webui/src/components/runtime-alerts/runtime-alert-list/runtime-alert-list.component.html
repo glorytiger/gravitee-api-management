@@ -101,17 +101,17 @@
               mat-icon-button
               aria-label="Button to edit an alert"
               matTooltip="Edit an alert"
-              *gioPermission="{ anyOf: ['api-definition-u'] }"
+              *gioPermission="{ anyOf: ['api-alert-r'] }"
               [disabled]="true"
             >
               <mat-icon svgIcon="gio:edit-pencil"></mat-icon>
             </button>
             <button
-              *gioPermission="{ anyOf: ['api-definition-u'] }"
+              *gioPermission="{ anyOf: ['api-alert-d'] }"
               mat-icon-button
               aria-label="Button to delete an alert"
               matTooltip="Delete an alert"
-              [disabled]="true"
+              (click)="deleteAlert.emit(alert)"
             >
               <mat-icon svgIcon="gio:trash"></mat-icon>
             </button>
