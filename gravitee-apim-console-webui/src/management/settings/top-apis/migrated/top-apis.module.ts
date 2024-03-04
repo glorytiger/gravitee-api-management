@@ -8,16 +8,23 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { TopApisComponent } from './top-apis.component';
+import { TopApisDialogComponent } from './top-apis-dialog/top-apis-dialog.component';
 
 import { GioTableWrapperModule } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioPermissionModule } from '../../../../shared/components/gio-permission/gio-permission.module';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
-    TopApisComponent
+    TopApisComponent,
+    TopApisDialogComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +39,13 @@ import { GioPermissionModule } from '../../../../shared/components/gio-permissio
     GioIconsModule,
     GioConfirmDialogModule,
     GioTableWrapperModule,
-    GioPermissionModule
+    GioPermissionModule,
+    MatFormFieldModule,
+    MatOptionModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    MatInputModule
   ],
   exports: [
     TopApisComponent
